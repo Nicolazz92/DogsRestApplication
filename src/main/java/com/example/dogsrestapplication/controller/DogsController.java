@@ -5,11 +5,12 @@ import com.example.dogsrestapplication.model.Dog;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/dogs")
 public class DogsController {
-    private static final Map<String, Dog> DOGS = new HashMap<>();
+    private static final Map<String, Dog> DOGS = new ConcurrentHashMap<>();
 
     @PostMapping
     public void post(@RequestBody Dog newDog) {
