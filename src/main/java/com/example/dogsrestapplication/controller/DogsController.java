@@ -1,53 +1,45 @@
 package com.example.dogsrestapplication.controller;
 
-import com.example.dogsrestapplication.exception.DogNotFoundException;
 import com.example.dogsrestapplication.model.Dog;
+import com.example.dogsrestapplication.service.DogsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/dogs")
 public class DogsController {
-    private static final Map<String, Dog> DOGS = new ConcurrentHashMap<>();
+
+    private DogsService service;
 
     @PostMapping
     public void post(@RequestBody Dog newDog) {
-        newDog.setId(UUID.randomUUID().toString());
-        DOGS.put(newDog.getId(), newDog);
+        service.create(newDog);
     }
 
     @GetMapping()
     public Collection<Dog> getAll() {
-        return DOGS.values();
+        return service.getAll();
     }
 
     @GetMapping("{id}")
     public Dog get(@PathVariable String id) {
-        if (DOGS.containsKey(id)) {
-            return DOGS.get(id);
-        } else {
-            throw new DogNotFoundException(id);
-        }
+        return service.get(id);
     }
 
     @PutMapping("{id}")
     public void put(@PathVariable String id, @RequestBody Dog newDog) {
-        if (DOGS.containsKey(id)) {
-            newDog.setId(DOGS.get(id).getId());
-            DOGS.put(id, newDog);
-        } else {
-            throw new DogNotFoundException(id);
-        }
+        service.replace(id, newDog);
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        if (DOGS.containsKey(id)) {
-            DOGS.remove(id);
-        } else {
-            throw new DogNotFoundException(id);
-        }
+        service.delete(id);
+    }
+
+    @Autowired
+    public void setService(DogsService service) {
+        this.service = service;
     }
 }
