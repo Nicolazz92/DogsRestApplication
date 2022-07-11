@@ -29,7 +29,7 @@ import java.util.Optional;
 import static com.example.dogsrestapplication.controller.TestUtils.newDogFactoryMethod;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static org.apache.commons.lang.builder.EqualsBuilder.reflectionEquals;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 
 @WebAppConfiguration
 @ContextConfiguration(locations = "/test-context.xml")
