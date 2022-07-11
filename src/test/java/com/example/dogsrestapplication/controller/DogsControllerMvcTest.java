@@ -111,7 +111,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void full_dog_livecycle() throws UnsupportedEncodingException, JsonProcessingException {
-        //POST
+        //POST_200
         Dog newDog = newDogFactoryMethod();
         MockHttpServletResponse postResponse = given()
                 .contentType("application/json")
@@ -121,7 +121,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
                 .getResponse();
         assertEquals(200, postResponse.getStatus());
 
-        //GET_ALL
+        //GET_ALL_200
         MockHttpServletResponse getAllResponse = get(URL).mvcResult().getResponse();
         assertEquals(200, getAllResponse.getStatus());
         List<Dog> dogList = objectMapper.readValue(getAllResponse.getContentAsString(), new TypeReference<>() {});
@@ -130,7 +130,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
                 .findAny();
         assertTrue(optionalDog.isPresent());
 
-        //PUT
+        //PUT_200
         String dogId = optionalDog.get().getId();
         Dog anotherNewDog = newDogFactoryMethod();
         MockHttpServletResponse putResponse = given()
@@ -141,7 +141,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
                 .getResponse();
         assertEquals(200, putResponse.getStatus());
 
-        //GET
+        //GET_200
         MockHttpServletResponse getResponse = get(String.join("/", URL, dogId))
                 .getMvcResult()
                 .getResponse();
@@ -150,13 +150,13 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
         assertNotNull(dog);
         assertTrue(reflectionEquals(dog, anotherNewDog, ID_FIELD));
 
-        //DELETE
+        //DELETE_200
         MockHttpServletResponse deleteResponse = delete(String.join("/", URL, dogId))
                 .getMvcResult()
                 .getResponse();
         assertEquals(200, deleteResponse.getStatus());
 
-        //GET
+        //GET_404
         MockHttpServletResponse getUnexistsResponse = delete(String.join("/", URL, dogId))
                 .getMvcResult()
                 .getResponse();
