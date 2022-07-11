@@ -36,6 +36,7 @@ import static org.junit.Assert.*;
 public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
 
     private static final String URL = "/dogs";
+    private static final List<String> ID_FIELD = Collections.singletonList("id");
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -77,7 +78,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
         assertEquals(200, getAllResponse.getStatus());
         List<Dog> content = objectMapper.readValue(getAllResponse.getContentAsString(), new TypeReference<>() {});
         assertTrue(content.stream()
-                .anyMatch(d -> reflectionEquals(d, newDog, Collections.singletonList("id"))));
+                .anyMatch(d -> reflectionEquals(d, newDog, ID_FIELD)));
     }
 
     @Test
@@ -125,7 +126,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
         assertEquals(200, getAllResponse.getStatus());
         List<Dog> dogList = objectMapper.readValue(getAllResponse.getContentAsString(), new TypeReference<>() {});
         Optional<Dog> optionalDog = dogList.stream()
-                .filter(d -> reflectionEquals(d, newDog, Collections.singletonList("id")))
+                .filter(d -> reflectionEquals(d, newDog, ID_FIELD))
                 .findAny();
         assertTrue(optionalDog.isPresent());
 
@@ -147,7 +148,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
         assertEquals(200, getResponse.getStatus());
         Dog dog = objectMapper.readValue(getResponse.getContentAsString(), Dog.class);
         assertNotNull(dog);
-        assertTrue(reflectionEquals(dog, anotherNewDog, Collections.singletonList("id")));
+        assertTrue(reflectionEquals(dog, anotherNewDog, ID_FIELD));
 
         //DELETE
         MockHttpServletResponse deleteResponse = delete(String.join("/", URL, dogId))
