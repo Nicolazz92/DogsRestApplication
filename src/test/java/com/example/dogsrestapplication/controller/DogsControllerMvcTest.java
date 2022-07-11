@@ -1,7 +1,6 @@
 package com.example.dogsrestapplication.controller;
 
 import com.example.dogsrestapplication.model.Dog;
-import com.example.dogsrestapplication.service.DogsMapService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +21,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,12 +41,6 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private DogsController dogsController;
-
-    @Autowired
-    private DogsMapService dogsMapService;
-
     ObjectMapper objectMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
@@ -54,59 +48,10 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
     @BeforeMethod
     public void before() {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-//        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(dogsController).build();
-        dogsController.setService(dogsMapService);
         RestAssuredMockMvc.mockMvc(mockMvc);
         RestAssuredMockMvc.requestSpecification = new MockMvcRequestSpecBuilder()
                 .setContentType(ContentType.JSON)
                 .build();
-    }
-
-    @Test
-    public void post_dog_and_find_it_in_getall_response() throws UnsupportedEncodingException, JsonProcessingException {
-        Dog newDog = newDogFactoryMethod();
-        MockHttpServletResponse postResponse = given()
-                .contentType("application/json")
-                .body(newDog)
-                .post(URL)
-                .getMvcResult()
-                .getResponse();
-        assertEquals(200, postResponse.getStatus());
-
-        MockHttpServletResponse getAllResponse = get(URL).mvcResult().getResponse();
-        assertEquals("application/json;charset=UTF-8", getAllResponse.getContentType());
-        assertEquals(200, getAllResponse.getStatus());
-        List<Dog> content = objectMapper.readValue(getAllResponse.getContentAsString(), new TypeReference<>() {});
-        assertTrue(content.stream()
-                .anyMatch(d -> reflectionEquals(d, newDog, ID_FIELD)));
-    }
-
-    @Test
-    public void put_unexisting_dog() {
-        Dog newDog = newDogFactoryMethod();
-        MockHttpServletResponse postResponse = given()
-                .contentType("application/json")
-                .body(newDog)
-                .put(URL + "/1")
-                .getMvcResult()
-                .getResponse();
-        assertEquals(404, postResponse.getStatus());
-    }
-
-    @Test
-    public void delete_unexisting_dog() {
-        MockHttpServletResponse postResponse = delete(URL + "/1")
-                .getMvcResult()
-                .getResponse();
-        assertEquals(404, postResponse.getStatus());
-    }
-
-    @Test
-    public void get_unexisting_dog() {
-        MockHttpServletResponse postResponse = get(URL + "/1")
-                .getMvcResult()
-                .getResponse();
-        assertEquals(404, postResponse.getStatus());
     }
 
     @Test
@@ -161,5 +106,72 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
                 .getMvcResult()
                 .getResponse();
         assertEquals(404, getUnexistsResponse.getStatus());
+    }
+
+    @Test
+    public void post_dog_and_find_it_in_getall_response() throws UnsupportedEncodingException, JsonProcessingException {
+        Dog newDog = newDogFactoryMethod();
+        MockHttpServletResponse postResponse = given()
+                .contentType("application/json")
+                .body(newDog)
+                .post(URL)
+                .getMvcResult()
+                .getResponse();
+        assertEquals(200, postResponse.getStatus());
+
+        MockHttpServletResponse getAllResponse = get(URL).mvcResult().getResponse();
+        assertEquals("application/json;charset=UTF-8", getAllResponse.getContentType());
+        assertEquals(200, getAllResponse.getStatus());
+        List<Dog> content = objectMapper.readValue(getAllResponse.getContentAsString(), new TypeReference<>() {});
+        assertTrue(content.stream()
+                .anyMatch(d -> reflectionEquals(d, newDog, ID_FIELD)));
+    }
+
+    @Test
+    public void put_unexisting_dog() {
+        Dog newDog = newDogFactoryMethod();
+        MockHttpServletResponse postResponse = given()
+                .contentType("application/json")
+                .body(newDog)
+                .put(URL + "/1")
+                .getMvcResult()
+                .getResponse();
+        assertEquals(404, postResponse.getStatus());
+    }
+
+    @Test
+    public void delete_unexisting_dog() {
+        MockHttpServletResponse postResponse = delete(URL + "/1")
+                .getMvcResult()
+                .getResponse();
+        assertEquals(404, postResponse.getStatus());
+    }
+
+    @Test
+    public void get_unexisting_dog() {
+        MockHttpServletResponse postResponse = get(URL + "/1")
+                .getMvcResult()
+                .getResponse();
+        assertEquals(404, postResponse.getStatus());
+    }
+
+    @Test
+    public void bean_validation_test() {
+        Dog dog = new Dog();
+
+        dog.setName("x");
+        dog.setHeight(1000);
+        dog.setWeight(1000);
+        dog.setDateOfBirth(LocalDate.now().plusDays(20));
+
+        MockHttpServletResponse postResponse = given()
+                .contentType("application/json")
+                .body(dog)
+                .post(URL)
+                .getMvcResult()
+                .getResponse();
+        System.out.println(postResponse.getStatus());
+
+//        System.out.println(dogsMapService.getAll().size());
     }
 }
