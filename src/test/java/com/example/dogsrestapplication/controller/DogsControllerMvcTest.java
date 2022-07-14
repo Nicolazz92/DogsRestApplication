@@ -42,7 +42,7 @@ import static org.testng.Assert.assertTrue;
 public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
 
     private static final String URL = "/dogs";
-    private static final List<String> ID_FIELD = Collections.singletonList("id");
+    private static final List<String> SKIPPED_ID_FIELD = Collections.singletonList("id");
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -88,7 +88,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
                 .extract().response().mvcResult().getResponse().getContentAsString();
         Dog dog = objectMapper.readValue(getResponse, Dog.class);
         assertNotNull(dog);
-        assertTrue(reflectionEquals(dog, anotherNewDog, ID_FIELD));
+        assertTrue(reflectionEquals(dog, anotherNewDog, SKIPPED_ID_FIELD));
 
         //DELETE_200
         delete(String.join("/", URL, dogId)).then().status(HttpStatus.OK);
@@ -115,7 +115,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
         List<Dog> content = objectMapper.readValue(getAllResponse, new TypeReference<>() {
         });
         assertTrue(content.stream()
-                .anyMatch(d -> reflectionEquals(d, newDog, ID_FIELD)));
+                .anyMatch(d -> reflectionEquals(d, newDog, SKIPPED_ID_FIELD)));
     }
 
     @Test
