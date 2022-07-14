@@ -7,13 +7,13 @@ import java.util.Collection;
 
 public interface DogsService {
 
-    void create(Dog newDog);
+    Dog create(Dog newDog);
 
     Collection<Dog> getAll();
 
     Dog get(String id) throws DogNotFoundException;
 
-    void replace(String id, Dog newDog) throws DogNotFoundException;
+    Dog replace(String id, Dog newDog) throws DogNotFoundException;
 
     void delete(String id) throws DogNotFoundException;
 }

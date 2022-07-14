@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
 
-public class TestUtils {
+public final class TestUtils {
 
     public static Dog newDogFactoryMethod() {
         Dog newDog = new Dog();
@@ -20,5 +20,15 @@ public class TestUtils {
         newDog.setHeight(new Random().nextInt(199) + 1);
         newDog.setWeight(new Random().nextInt(100));
         return newDog;
+    }
+
+    public static Dog newNonValidatedDogFactoryMethod() {
+        Dog nonValidatedDog = new Dog();
+        nonValidatedDog.setName("x");
+        nonValidatedDog.setHeight(1000);
+        nonValidatedDog.setWeight(1000);
+        LocalDate dateOfBirth = LocalDate.now().plusDays(20);
+        nonValidatedDog.setDateOfBirth(dateOfBirth);
+        return nonValidatedDog;
     }
 }

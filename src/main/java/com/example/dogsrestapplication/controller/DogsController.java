@@ -2,20 +2,28 @@ package com.example.dogsrestapplication.controller;
 
 import com.example.dogsrestapplication.model.Dog;
 import com.example.dogsrestapplication.service.DogsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import javax.validation.Valid;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/dogs")
 public class DogsController {
 
-    private DogsService service;
+    private final DogsService service;
+
+    public DogsController(DogsService service) {
+        this.service = service;
+    }
 
     @PostMapping
-    public void post(@RequestBody Dog newDog) {
-        service.create(newDog);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Dog post(@RequestBody @Valid Dog newDog) {
+        Dog dog = service.create(newDog);
+        System.out.println(dog.getName());
+        return dog;
     }
 
     @GetMapping()
@@ -29,17 +37,13 @@ public class DogsController {
     }
 
     @PutMapping("{id}")
-    public void put(@PathVariable String id, @RequestBody Dog newDog) {
-        service.replace(id, newDog);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Dog put(@PathVariable String id, @RequestBody @Valid Dog newDog) {
+        return service.replace(id, newDog);
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
         service.delete(id);
-    }
-
-    @Autowired
-    public void setService(DogsService service) {
-        this.service = service;
     }
 }
