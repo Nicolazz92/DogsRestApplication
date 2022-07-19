@@ -19,11 +19,12 @@
         <rest-assured.version>5.1.1</rest-assured.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <unitils-core.version>3.4.6</unitils-core.version>
-<!--        <javax.json.bind-api.version>1.0</javax.json.bind-api.version>-->
+        <!--        <javax.json.bind-api.version>1.0</javax.json.bind-api.version>-->
         <jackson-datatype-jsr310.version>2.11.4</jackson-datatype-jsr310.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <hibernate-validator.version>6.2.3.Final</hibernate-validator.version>
         <javax.el.version>3.0.0</javax.el.version>
+        <tomcat-embed-el.version>9.0.64</tomcat-embed-el.version>
     </properties>
 
     <dependencies>
@@ -65,11 +66,12 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate-validator.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.glassfish/javax.el -->
+        <!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-el -->
         <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>${javax.el.version}</version>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-el</artifactId>
+            <version>${tomcat-embed-el.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--test-->

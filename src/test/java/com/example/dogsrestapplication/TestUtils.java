@@ -1,4 +1,4 @@
-package com.example.dogsrestapplication.controller;
+package com.example.dogsrestapplication;
 
 import com.example.dogsrestapplication.model.Dog;
 

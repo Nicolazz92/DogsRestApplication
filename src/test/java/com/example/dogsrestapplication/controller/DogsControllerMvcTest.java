@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.example.dogsrestapplication.controller.TestUtils.newDogFactoryMethod;
-import static com.example.dogsrestapplication.controller.TestUtils.newNonValidatedDogFactoryMethod;
+import static com.example.dogsrestapplication.TestUtils.newDogFactoryMethod;
+import static com.example.dogsrestapplication.TestUtils.newNonValidatedDogFactoryMethod;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static org.apache.commons.lang.builder.EqualsBuilder.reflectionEquals;
 import static org.hamcrest.core.StringContains.containsString;
@@ -40,6 +40,7 @@ import static org.testng.Assert.assertTrue;
 @WebAppConfiguration
 @ContextConfiguration(locations = "/test-context.xml")
 public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
+    //TODO вынести http методы в утильки
 
     private static final String URL = "/dogs";
     private static final List<String> SKIPPED_ID_FIELD = Collections.singletonList("id");

@@ -1,16 +1,15 @@
-package com.example.dogsrestapplication.controller;
+package com.example.dogsrestapplication.service;
 
 import com.example.dogsrestapplication.exception.DogNotFoundException;
 import com.example.dogsrestapplication.model.Dog;
-import com.example.dogsrestapplication.service.DogsMapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 import org.unitils.reflectionassert.ReflectionAssert;
 
-import static com.example.dogsrestapplication.controller.TestUtils.newDogFactoryMethod;
-import static org.testng.Assert.*;
+import static com.example.dogsrestapplication.TestUtils.newDogFactoryMethod;
+import static org.testng.Assert.assertEquals;
 
 @ContextConfiguration("/test-context.xml")
 public class DogsMapServiceUnitTest extends AbstractTestNGSpringContextTests {
