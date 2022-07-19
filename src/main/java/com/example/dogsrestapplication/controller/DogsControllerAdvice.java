@@ -1,8 +1,8 @@
 package com.example.dogsrestapplication.controller;
 
 import com.example.dogsrestapplication.exception.DogNotFoundException;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +22,13 @@ public class DogsControllerAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public RestErrorMessage illegalArgumentExceptionHandler(IllegalArgumentException exception) {
+        return new RestErrorMessage(exception.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public RestErrorMessage illegalArgumentExceptionHandler(MethodArgumentNotValidException exception) {
         return new RestErrorMessage(exception.getMessage());
     }
 

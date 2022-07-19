@@ -21,9 +21,7 @@ public class DogsController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Dog post(@RequestBody @Valid Dog newDog) {
-        Dog dog = service.create(newDog);
-        System.out.println(dog.getName());
-        return dog;
+        return service.create(newDog);
     }
 
     @GetMapping()
