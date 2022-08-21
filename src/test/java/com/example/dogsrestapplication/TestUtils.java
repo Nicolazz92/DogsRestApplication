@@ -1,12 +1,29 @@
 package com.example.dogsrestapplication;
 
 import com.example.dogsrestapplication.model.Dog;
+import io.restassured.module.mockmvc.response.MockMvcResponse;
 
 import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
 
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+
 public final class TestUtils {
+
+    public static MockMvcResponse postNewDog(Dog newDog, String url) {
+        return given()
+                .contentType("application/json")
+                .body(newDog)
+                .post(url);
+    }
+
+    public static MockMvcResponse putDog(Dog dog, String url) {
+        return given()
+                .contentType("application/json")
+                .body(dog)
+                .put(url);
+    }
 
     public static Dog newDogFactoryMethod() {
         Dog newDog = new Dog();

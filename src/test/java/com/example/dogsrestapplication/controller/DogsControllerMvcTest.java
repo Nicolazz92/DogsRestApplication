@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.example.dogsrestapplication.TestUtils.newDogFactoryMethod;
-import static com.example.dogsrestapplication.TestUtils.newNonValidatedDogFactoryMethod;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
+import static com.example.dogsrestapplication.TestUtils.*;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.delete;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.get;
 import static org.apache.commons.lang.builder.EqualsBuilder.reflectionEquals;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,7 +40,6 @@ import static org.testng.Assert.assertTrue;
 @WebAppConfiguration
 @ContextConfiguration(locations = "/test-context.xml")
 public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
-    //TODO вынести http методы в утильки
 
     private static final String URL = "/dogs";
     private static final List<String> SKIPPED_ID_FIELD = Collections.singletonList("id");
@@ -66,21 +65,16 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
     public void full_dog_livecycle() throws UnsupportedEncodingException, JsonProcessingException {
         //POST_200
         Dog newDog = newDogFactoryMethod();
-        String createdDogAsString = given()
-                .contentType("application/json")
-                .body(newDog)
-                .post(URL)
-                .then().status(HttpStatus.CREATED)
+        String createdDogAsString = postNewDog(newDog, URL)
+                .then()
+                .status(HttpStatus.CREATED)
                 .extract().response().mvcResult().getResponse().getContentAsString();
 
         //PUT_200
         Dog createdDog = objectMapper.readValue(createdDogAsString, Dog.class);
         String dogId = createdDog.getId();
         Dog anotherNewDog = newDogFactoryMethod();
-        given()
-                .contentType("application/json")
-                .body(anotherNewDog)
-                .put(String.join("/", URL, dogId))
+        putDog(anotherNewDog, String.join("/", URL, dogId))
                 .then().status(HttpStatus.CREATED);
 
         //GET_200
@@ -101,10 +95,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
     @Test
     public void post_dog_and_find_it_in_getall_response() throws JsonProcessingException, UnsupportedEncodingException {
         Dog newDog = newDogFactoryMethod();
-        given()
-                .contentType("application/json")
-                .body(newDog)
-                .post(URL)
+        postNewDog(newDog, URL)
                 .then()
                 .status(HttpStatus.CREATED);
 
@@ -121,10 +112,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void putting_unexisting_dog_returns_404() {
-        given()
-                .contentType("application/json")
-                .body(newDogFactoryMethod())
-                .put(URL + "/1")
+        putDog(newDogFactoryMethod(), URL + "/1")
                 .then().status(HttpStatus.NOT_FOUND);
     }
 
@@ -143,10 +131,7 @@ public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
         Dog badDogRequest = newNonValidatedDogFactoryMethod();
         LocalDate dateOfBirth = badDogRequest.getDateOfBirth();
 
-        given()
-                .contentType("application/json")
-                .body(badDogRequest)
-                .post(URL)
+        postNewDog(badDogRequest, URL)
                 .then()
                 .status(HttpStatus.BAD_REQUEST)
                 .statusLine(containsString("name size 'x' is not between 2 and 50"))
