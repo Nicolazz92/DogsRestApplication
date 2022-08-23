@@ -12,7 +12,20 @@
     </mvc:annotation-driven>
 
     <bean class="com.example.dogsrestapplication.controller.DogsController"/>
-    <bean class="com.example.dogsrestapplication.service.DogsMapService"/>
+
+    <bean id="dogsMapService" class="com.example.dogsrestapplication.service.DogsMapService"/>
+    <bean id="dogsJdbcService" class="com.example.dogsrestapplication.service.DogsJdbcService"/>
+    <bean class="com.example.dogsrestapplication.dao.JdbcDogDao"/>
+
     <bean class="com.example.dogsrestapplication.controller.DogsControllerAdvice"/>
 
+    <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
+        <constructor-arg>
+            <bean class="org.h2.jdbcx.JdbcDataSource">
+                <property name="URL" value="jdbc:h2:./h2db/testdb"/>
+                <property name="user" value="sa"/>
+                <property name="password" value="sa"/>
+            </bean>
+        </constructor-arg>
+    </bean>
 </beans>

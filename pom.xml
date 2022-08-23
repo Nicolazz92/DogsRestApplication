@@ -25,9 +25,16 @@
         <hibernate-validator.version>6.2.3.Final</hibernate-validator.version>
         <javax.el.version>3.0.0</javax.el.version>
         <tomcat-embed-el.version>9.0.64</tomcat-embed-el.version>
+        <h2.version>2.1.214</h2.version>
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

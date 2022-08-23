@@ -2,6 +2,7 @@ package com.example.dogsrestapplication.controller;
 
 import com.example.dogsrestapplication.model.Dog;
 import com.example.dogsrestapplication.service.DogsService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class DogsController {
 
     private final DogsService service;
 
-    public DogsController(DogsService service) {
+    public DogsController(@Qualifier("dogsJdbcService") DogsService service) {
         this.service = service;
     }
 

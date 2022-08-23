@@ -4,12 +4,15 @@ import com.example.dogsrestapplication.model.Dog;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
 public final class TestUtils {
+    public static final List<String> SKIPPED_ID_FIELD = Collections.singletonList("id");
 
     public static MockMvcResponse postNewDog(Dog newDog, String url) {
         return given()

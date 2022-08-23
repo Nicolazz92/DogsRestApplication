@@ -24,7 +24,6 @@ import org.testng.annotations.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,7 +41,6 @@ import static org.testng.Assert.assertTrue;
 public class DogsControllerMvcTest extends AbstractTestNGSpringContextTests {
 
     private static final String URL = "/dogs";
-    private static final List<String> SKIPPED_ID_FIELD = Collections.singletonList("id");
 
     @Autowired
     private WebApplicationContext webApplicationContext;
