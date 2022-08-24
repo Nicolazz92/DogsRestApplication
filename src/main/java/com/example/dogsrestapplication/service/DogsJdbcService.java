@@ -18,7 +18,7 @@ public class DogsJdbcService implements DogsService {
     @Override
     public Dog create(Dog newDog) {
         newDog.setId(UUID.randomUUID().toString());
-        return dogDao.create(newDog).orElse(null);
+        return dogDao.create(newDog);
     }
 
     @Override

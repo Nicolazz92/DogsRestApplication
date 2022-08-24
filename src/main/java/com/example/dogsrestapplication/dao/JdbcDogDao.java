@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class JdbcDogDao {
+    //TODO отрубить автокоммит
+
     private final DataSource dataSource;
 
     public JdbcDogDao(DataSource dataSource) {
@@ -39,22 +41,17 @@ public class JdbcDogDao {
         }
     }
 
-    public Optional<Dog> create(Dog newDog) {
+    public Dog create(Dog newDog) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("insert into dog values ( ?, ?, ?, ?, ? )");
+             PreparedStatement preparedStatement = connection.prepareStatement("insert into dog values ( ?, ?, ?, ?, ? )")
         ) {
             preparedStatement.setString(1, newDog.getId());
             preparedStatement.setString(2, newDog.getName());
             preparedStatement.setDate(3, java.sql.Date.valueOf(newDog.getDateOfBirth()));
             preparedStatement.setInt(4, newDog.getHeight());
             preparedStatement.setInt(5, newDog.getWeight());
-            int resultInt = preparedStatement.executeUpdate();
-            System.out.println("Inserted: " + resultInt);
-            if (resultInt == 1) {
-                return Optional.of(newDog);
-            } else {
-                return Optional.empty();
-            }
+            preparedStatement.executeUpdate();
+            return newDog;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -63,12 +60,11 @@ public class JdbcDogDao {
     public Collection<Dog> getAll() {
         ArrayList<Dog> result = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("select * from dog");
+             PreparedStatement preparedStatement = connection.prepareStatement("select * from dog")
         ) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Dog dog = new Dog();
-                extractResultSetToDogUtil(dog, resultSet);
+                Dog dog = extractResultSetToDogUtil(resultSet);
                 result.add(dog);
                 System.out.printf("Got: %s%n", dog);
             }
@@ -78,7 +74,7 @@ public class JdbcDogDao {
         return result;
     }
 
-    public Optional<Dog> get(String id) throws DogNotFoundException {
+    public Optional<Dog> get(String id) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("select * from dog where id=?");
         ) {
@@ -86,8 +82,7 @@ public class JdbcDogDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             boolean isNotEmpty = resultSet.next();
             if (isNotEmpty) {
-                Dog dog = new Dog();
-                extractResultSetToDogUtil(dog, resultSet);
+                Dog dog = extractResultSetToDogUtil(resultSet);
                 System.out.printf("Got: %s%n", dog);
                 return Optional.of(dog);
             }
@@ -98,7 +93,6 @@ public class JdbcDogDao {
     }
 
     public Optional<Dog> replace(String id, Dog newDog) throws DogNotFoundException {
-        Dog result = new Dog();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("update dog set name=?, dateOfBirth=?, height=?, weight=? where id=?")
         ) {
@@ -110,16 +104,16 @@ public class JdbcDogDao {
             int resultInt = preparedStatement.executeUpdate();
             System.out.printf("Updated: %s%n", resultInt);
             if (resultInt == 1) {
-                return Optional.of(result);
+                return Optional.of(newDog);
             } else {
-                return Optional.empty();
+                throw new DogNotFoundException(id);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean delete(String id) throws DogNotFoundException {
+    public boolean delete(String id) {
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
         ) {
@@ -131,11 +125,13 @@ public class JdbcDogDao {
         }
     }
 
-    private static void extractResultSetToDogUtil(Dog dog, ResultSet resultSet) throws SQLException {
+    private static Dog extractResultSetToDogUtil(ResultSet resultSet) throws SQLException {
+        Dog dog = new Dog();
         dog.setId(resultSet.getString("id"));
         dog.setName(resultSet.getString("name"));
         dog.setDateOfBirth(resultSet.getDate("dateOfBirth").toLocalDate());
         dog.setHeight(resultSet.getInt("height"));
         dog.setWeight(resultSet.getInt("weight"));
+        return dog;
     }
 }
