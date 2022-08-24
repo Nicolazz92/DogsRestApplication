@@ -4,10 +4,7 @@ import com.example.dogsrestapplication.exception.DogNotFoundException;
 import com.example.dogsrestapplication.model.Dog;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -44,10 +41,14 @@ public class JdbcDogDao {
 
     public Optional<Dog> create(Dog newDog) {
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
+             PreparedStatement preparedStatement = connection.prepareStatement("insert into dog values ( ?, ?, ?, ?, ? )");
         ) {
-            int resultInt = statement.executeUpdate(String.format("insert into dog values ( '%s', '%s', '%s', %s, %s )",
-                    newDog.getId(), newDog.getName(), newDog.getDateOfBirth(), newDog.getHeight(), newDog.getWeight()));
+            preparedStatement.setString(1, newDog.getId());
+            preparedStatement.setString(2, newDog.getName());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(newDog.getDateOfBirth()));
+            preparedStatement.setInt(4, newDog.getHeight());
+            preparedStatement.setInt(5, newDog.getWeight());
+            int resultInt = preparedStatement.executeUpdate();
             System.out.println("Inserted: " + resultInt);
             if (resultInt == 1) {
                 return Optional.of(newDog);
@@ -63,9 +64,9 @@ public class JdbcDogDao {
     public Collection<Dog> getAll() {
         ArrayList<Dog> result = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
+             PreparedStatement preparedStatement = connection.prepareStatement("select * from dog");
         ) {
-            ResultSet resultSet = statement.executeQuery("select * from dog");
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Dog dog = new Dog();
                 extractResultSetToDogUtil(dog, resultSet);
@@ -80,14 +81,17 @@ public class JdbcDogDao {
 
     public Optional<Dog> get(String id) throws DogNotFoundException {
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
+             PreparedStatement preparedStatement = connection.prepareStatement("select * from dog where id=?");
         ) {
-            ResultSet resultSet = statement.executeQuery(String.format("select * from dog where id='%s'", id));
-            resultSet.next();
-            Dog dog = new Dog();
-            extractResultSetToDogUtil(dog, resultSet);
-            System.out.printf("Got: %s%n", dog);
-            return Optional.of(dog);
+            preparedStatement.setString(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            boolean isNotEmpty = resultSet.next();
+            if (isNotEmpty) {
+                Dog dog = new Dog();
+                extractResultSetToDogUtil(dog, resultSet);
+                System.out.printf("Got: %s%n", dog);
+                return Optional.of(dog);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -97,14 +101,18 @@ public class JdbcDogDao {
     public Optional<Dog> replace(String id, Dog newDog) throws DogNotFoundException {
         Dog result = new Dog();
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
+             PreparedStatement preparedStatement = connection.prepareStatement("update dog set name=?, dateOfBirth=?, height=?, weight=? where id=?")
         ) {
-            int resultSet = statement.executeUpdate(String.format("update dog set name='%s', dateOfBirth='%s', height=%s, weight=%s where id='%s'",
-                    newDog.getName(), newDog.getDateOfBirth(), newDog.getHeight(), newDog.getWeight(), id));
-            System.out.printf("Updated: %s%n", resultSet);
-            if (resultSet == 1) {
+            preparedStatement.setString(1, newDog.getName());
+            preparedStatement.setDate(2, java.sql.Date.valueOf(newDog.getDateOfBirth()));
+            preparedStatement.setInt(3, newDog.getHeight());
+            preparedStatement.setInt(4, newDog.getWeight());
+            preparedStatement.setString(5, id);
+            int resultInt = preparedStatement.executeUpdate();
+            System.out.printf("Updated: %s%n", resultInt);
+            if (resultInt == 1) {
                 return Optional.of(result);
-            } else  {
+            } else {
                 return Optional.empty();
             }
         } catch (SQLException e) {
