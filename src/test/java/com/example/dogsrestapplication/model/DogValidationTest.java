@@ -15,6 +15,7 @@ import static org.testng.Assert.assertTrue;
 
 @Test
 public class DogValidationTest {
+    //TODO протетсить пограничные значение в обоих тестах
 
     private static Validator validator;
 
@@ -24,14 +25,14 @@ public class DogValidationTest {
     }
 
     @Test
-    public void correctDogTest() {
+    public void correct_dog_entity_passes_validation() {
         Dog correctDog = newDogFactoryMethod();
         Set<ConstraintViolation<Dog>> validate = validator.validate(correctDog);
         assertTrue(validate.isEmpty());
     }
 
     @Test
-    public void incorrectDogTest() {
+    public void incorrect_dog_entity_doesnt_passes_validation() {
         Dog incorrectDog = newNonValidatedDogFactoryMethod();
         LocalDate dateOfBirth = incorrectDog.getDateOfBirth();
 

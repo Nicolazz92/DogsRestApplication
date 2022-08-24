@@ -19,13 +19,9 @@
 
     <bean class="com.example.dogsrestapplication.controller.DogsControllerAdvice"/>
 
-    <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" destroy-method="dispose">
-        <constructor-arg>
-            <bean class="org.h2.jdbcx.JdbcDataSource">
-                <property name="URL" value="jdbc:h2:./h2db/testdb"/>
-                <property name="user" value="sa"/>
-                <property name="password" value="sa"/>
-            </bean>
-        </constructor-arg>
+    <bean class="org.h2.jdbcx.JdbcDataSource">
+        <property name="URL" value="jdbc:h2:./h2db/testdb"/>
+        <property name="user" value="sa"/>
+        <property name="password" value="sa"/>
     </bean>
 </beans>

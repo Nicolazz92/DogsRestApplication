@@ -56,9 +56,8 @@ public class JdbcDogDao {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return Optional.ofNullable(newDog);
     }
 
     public Collection<Dog> getAll() {
@@ -74,7 +73,7 @@ public class JdbcDogDao {
                 System.out.printf("Got: %s%n", dog);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return result;
     }
@@ -93,7 +92,7 @@ public class JdbcDogDao {
                 return Optional.of(dog);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return Optional.empty();
     }
@@ -116,19 +115,19 @@ public class JdbcDogDao {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return Optional.empty();
     }
 
-    public void delete(String id) throws DogNotFoundException {
+    public boolean delete(String id) throws DogNotFoundException {
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
         ) {
             int resultInt = statement.executeUpdate(String.format("delete from dog where id='%s'", id));
             System.out.println("Deleted: " + resultInt);
+            return resultInt > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

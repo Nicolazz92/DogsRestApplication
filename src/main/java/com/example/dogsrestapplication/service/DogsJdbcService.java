@@ -26,18 +26,19 @@ public class DogsJdbcService implements DogsService {
         return dogDao.getAll();
     }
 
+    @Override
     public Dog get(String id) throws DogNotFoundException {
         return dogDao.get(id).orElseThrow(() -> new DogNotFoundException(id));
     }
 
+    @Override
     public Dog replace(String id, Dog newDog) throws DogNotFoundException {
         return dogDao.replace(id, newDog).orElseThrow(() -> new DogNotFoundException(id));
     }
 
+    @Override
     public void delete(String id) throws DogNotFoundException {
-        if (dogDao.get(id).isPresent()) {
-            dogDao.delete(id);
-        } else {
+        if (!dogDao.delete(id)) {
             throw new DogNotFoundException(id);
         }
     }
