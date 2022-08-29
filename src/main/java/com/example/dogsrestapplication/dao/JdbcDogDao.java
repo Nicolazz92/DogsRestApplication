@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class JdbcDogDao {
-    //TODO отрубить автокоммит
 
     private final DataSource dataSource;
 
@@ -42,19 +41,45 @@ public class JdbcDogDao {
     }
 
     public Dog create(Dog newDog) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("insert into dog values ( ?, ?, ?, ?, ? )")
-        ) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement("insert into dog values ( ?, ?, ?, ?, ? )");
             preparedStatement.setString(1, newDog.getId());
             preparedStatement.setString(2, newDog.getName());
             preparedStatement.setDate(3, java.sql.Date.valueOf(newDog.getDateOfBirth()));
             preparedStatement.setInt(4, newDog.getHeight());
             preparedStatement.setInt(5, newDog.getWeight());
             preparedStatement.executeUpdate();
-            return newDog;
+            connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        return newDog;
     }
 
     public Collection<Dog> getAll() {
