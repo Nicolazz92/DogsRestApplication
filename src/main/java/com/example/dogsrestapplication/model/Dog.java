@@ -21,6 +21,8 @@ public class Dog {
     @DecimalMax(value = "100", message = "weight '${validatedValue}' is greater then {value}")
     private int weight;
 
+    private String code;
+
     public String getId() {
         return id;
     }
@@ -61,6 +63,14 @@ public class Dog {
         this.weight = weight;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     @Override
     public String toString() {
         return "Dog{" +
@@ -69,6 +79,7 @@ public class Dog {
                 ", dateOfBirth=" + dateOfBirth +
                 ", height=" + height +
                 ", weight=" + weight +
+                ", code=" + code +
                 '}';
     }
 }

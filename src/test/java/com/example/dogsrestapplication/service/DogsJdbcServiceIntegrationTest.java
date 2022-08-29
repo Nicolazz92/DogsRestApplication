@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
+import org.unitils.reflectionassert.ReflectionAssert;
 
 import static com.example.dogsrestapplication.TestUtils.SKIPPED_ID_FIELD;
 import static com.example.dogsrestapplication.TestUtils.newDogFactoryMethod;
@@ -23,9 +24,7 @@ public class DogsJdbcServiceIntegrationTest extends AbstractTestNGSpringContextT
     public void posting_dogs_adds_them_to_dogs_data() {
         int startSize = dogsJdbcService.getAll().size();
         dogsJdbcService.create(newDogFactoryMethod());
-        Dog dog = newDogFactoryMethod();
-        dog.setId("1");
-        dogsJdbcService.create(dog);
+        dogsJdbcService.create(newDogFactoryMethod());
         assertEquals(2, dogsJdbcService.getAll().size() - startSize);
     }
 
@@ -76,5 +75,26 @@ public class DogsJdbcServiceIntegrationTest extends AbstractTestNGSpringContextT
     @Test(expectedExceptions = DogNotFoundException.class)
     public void deleting_dog_by_unexcisting_id_produces_exception() {
         dogsJdbcService.delete("unexcisting_id");
+    }
+
+    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = ".*Value too long for column \"NAME CHARACTER VARYING\\(50\\)\".*")
+    public void database_constraint_dog_name_works() {
+        Dog dog = newDogFactoryMethod();
+        dog.setName("dogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdo");
+        dogsJdbcService.create(dog);
+        ReflectionAssert.assertReflectionEquals(dog, dogsJdbcService.get(dog.getId()));
+
+        dog = newDogFactoryMethod();
+        dog.setName("dogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdodogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdo");
+        dogsJdbcService.create(dog);
+    }
+
+    //FIXME инъекция не работает
+//    @Test
+    public void database_injection_dog_code_vulnerable() {
+        Dog dog = newDogFactoryMethod();
+        dog.setCode("\" or 1=1; drop table dog");
+        dogsJdbcService.create(dog);
+        ReflectionAssert.assertReflectionEquals(dog, dogsJdbcService.get(dog.getId()));
     }
 }

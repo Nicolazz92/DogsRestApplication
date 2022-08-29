@@ -23,11 +23,12 @@ public class JdbcDogDao {
                 "drop table if exists dog;" +
                         "create table dog" +
                         "(" +
-                        "    id          varchar(255)," +
-                        "    name        varchar(255)," +
+                        "    id          varchar(36)," +
+                        "    name        varchar(50)," +
                         "    dateOfBirth date," +
                         "    height      numeric," +
-                        "    weight      numeric" +
+                        "    weight      numeric," +
+                        "    code        varchar(255)" +
                         ");";
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
@@ -46,12 +47,13 @@ public class JdbcDogDao {
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            preparedStatement = connection.prepareStatement("insert into dog values ( ?, ?, ?, ?, ? )");
+            preparedStatement = connection.prepareStatement("insert into dog values ( ?, ?, ?, ?, ?, ? )");
             preparedStatement.setString(1, newDog.getId());
             preparedStatement.setString(2, newDog.getName());
             preparedStatement.setDate(3, java.sql.Date.valueOf(newDog.getDateOfBirth()));
             preparedStatement.setInt(4, newDog.getHeight());
             preparedStatement.setInt(5, newDog.getWeight());
+            preparedStatement.setString(6, newDog.getCode());
             preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -62,7 +64,7 @@ public class JdbcDogDao {
                     throw new RuntimeException(ex);
                 }
             }
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             if (preparedStatement != null) {
                 try {
