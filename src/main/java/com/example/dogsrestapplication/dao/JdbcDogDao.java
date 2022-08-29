@@ -115,9 +115,10 @@ public class JdbcDogDao {
 
     public boolean delete(String id) {
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
+             PreparedStatement preparedStatement = connection.prepareStatement("delete from dog where id=?")
         ) {
-            int resultInt = statement.executeUpdate(String.format("delete from dog where id='%s'", id));
+            preparedStatement.setString(1, id);
+            int resultInt = preparedStatement.executeUpdate();
             System.out.println("Deleted: " + resultInt);
             return resultInt > 0;
         } catch (SQLException e) {
