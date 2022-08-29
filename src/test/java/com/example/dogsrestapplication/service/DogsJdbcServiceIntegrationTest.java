@@ -88,13 +88,4 @@ public class DogsJdbcServiceIntegrationTest extends AbstractTestNGSpringContextT
         dog.setName("dogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdodogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdo");
         dogsJdbcService.create(dog);
     }
-
-    //FIXME инъекция не работает
-//    @Test
-    public void database_injection_dog_code_vulnerable() {
-        Dog dog = newDogFactoryMethod();
-        dog.setCode("\" or 1=1; drop table dog");
-        dogsJdbcService.create(dog);
-        ReflectionAssert.assertReflectionEquals(dog, dogsJdbcService.get(dog.getId()));
-    }
 }
