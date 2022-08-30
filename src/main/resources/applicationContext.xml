@@ -19,9 +19,15 @@
 
     <bean class="com.example.dogsrestapplication.controller.DogsControllerAdvice"/>
 
-    <bean class="org.h2.jdbcx.JdbcDataSource">
-        <property name="URL" value="jdbc:h2:./h2db/testdb"/>
-        <property name="user" value="sa"/>
-        <property name="password" value="sa"/>
+<!--    <bean class="org.h2.jdbcx.JdbcDataSource">-->
+<!--        <property name="URL" value="jdbc:h2:./h2db/testdb"/>-->
+<!--        <property name="user" value="sa"/>-->
+<!--        <property name="password" value="sa"/>-->
+<!--    </bean>-->
+
+    <bean class="com.mysql.cj.jdbc.MysqlDataSource">
+        <property name="URL" value="jdbc:mysql://localhost:3306/dog_rest_app"/>
+        <property name="user" value="admin"/>
+        <property name="password" value="admin"/>
     </bean>
 </beans>

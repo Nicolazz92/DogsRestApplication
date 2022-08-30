@@ -20,8 +20,7 @@ public class JdbcDogDao {
 
     public void setDDL() {
         String dogDDL =
-                "drop table if exists dog;" +
-                        "create table dog" +
+                "create table if not exists dog" +
                         "(" +
                         "    id          varchar(36)," +
                         "    name        varchar(50)," +

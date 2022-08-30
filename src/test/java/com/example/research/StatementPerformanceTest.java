@@ -1,6 +1,5 @@
 package com.example.research;
 
-import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -8,6 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
@@ -16,15 +16,14 @@ import java.time.temporal.ChronoField;
 public class StatementPerformanceTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    private JdbcDataSource dataSource;
-    private static final int INSERT_NUMBER = 100_000;
+    private DataSource dataSource;
+    private static final int INSERT_NUMBER = 1_000;
 
     @BeforeMethod
     public void setUp() {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "DROP TABLE IF EXISTS TEST; " +
-                             "CREATE TABLE TEST (" +
+                     "CREATE TABLE if not exists TEST (" +
                              "a1 numeric," +
                              "a2 numeric," +
                              "a3 numeric," +
@@ -35,9 +34,11 @@ public class StatementPerformanceTest extends AbstractTestNGSpringContextTests {
                              "a8 numeric," +
                              "a9 numeric," +
                              "a10 numeric" +
-                             ");")
+                             ");");
+             PreparedStatement clearTable = connection.prepareStatement("DELETE FROM TEST;")
         ) {
             preparedStatement.execute();
+            clearTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
