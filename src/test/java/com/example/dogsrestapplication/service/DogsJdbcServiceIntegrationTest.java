@@ -77,7 +77,7 @@ public class DogsJdbcServiceIntegrationTest extends AbstractTestNGSpringContextT
         dogsJdbcService.delete("unexcisting_id");
     }
 
-    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = ".*Data truncation: Data too long for column 'name' at row 1*")
+    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = ".*ERROR: value too long for type character varying\\(50\\)*")
     public void database_constraint_dog_name_works() {
         Dog dog = newDogFactoryMethod();
         dog.setName("dogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdogdo");

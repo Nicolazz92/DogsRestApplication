@@ -70,17 +70,16 @@ public class StatementPerformanceTest extends AbstractTestNGSpringContextTests {
              Statement statement = connection.createStatement()) {
             LocalDateTime before = LocalDateTime.now();
             for (int i = 0; i < INSERT_NUMBER; i++) {
-                String x = String.valueOf(i);
-                preparedStatement.setString(1, x);
-                preparedStatement.setString(2, x);
-                preparedStatement.setString(3, x);
-                preparedStatement.setString(4, x);
-                preparedStatement.setString(5, x);
-                preparedStatement.setString(6, x);
-                preparedStatement.setString(7, x);
-                preparedStatement.setString(8, x);
-                preparedStatement.setString(9, x);
-                preparedStatement.setString(10, x);
+                preparedStatement.setInt(1, i);
+                preparedStatement.setInt(2, i);
+                preparedStatement.setInt(3, i);
+                preparedStatement.setInt(4, i);
+                preparedStatement.setInt(5, i);
+                preparedStatement.setInt(6, i);
+                preparedStatement.setInt(7, i);
+                preparedStatement.setInt(8, i);
+                preparedStatement.setInt(9, i);
+                preparedStatement.setInt(10, i);
                 preparedStatement.executeUpdate();
             }
             LocalDateTime after = LocalDateTime.now();
