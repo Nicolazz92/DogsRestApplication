@@ -27,9 +27,16 @@
         <tomcat-embed-el.version>9.0.64</tomcat-embed-el.version>
         <h2.version>2.1.214</h2.version>
         <postgresql.version>42.5.0</postgresql.version>
+        <flyway-maven-plugin.version>9.3.0</flyway-maven-plugin.version>
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>${flyway-maven-plugin.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -137,4 +144,19 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway-maven-plugin.version}</version>
+                <configuration>
+                    <configFiles>
+                        <configFile>flyway.properties</configFile>
+                    </configFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
