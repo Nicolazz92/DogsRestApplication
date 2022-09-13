@@ -4,7 +4,10 @@ import com.example.dogsrestapplication.exception.DogNotFoundException;
 import com.example.dogsrestapplication.model.Dog;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -15,29 +18,6 @@ public class JdbcDogDao {
 
     public JdbcDogDao(DataSource dataSource) {
         this.dataSource = dataSource;
-        setDDL();
-    }
-
-    public void setDDL() {
-        String dogDDL =
-                "create table if not exists dog" +
-                        "(" +
-                        "    id          varchar(36)," +
-                        "    name        varchar(50)," +
-                        "    dateOfBirth date," +
-                        "    height      numeric," +
-                        "    weight      numeric," +
-                        "    code        varchar(255)" +
-                        ");";
-        try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
-        ) {
-            statement.executeUpdate(dogDDL);
-            System.out.println("Схема обновлена");
-        } catch (SQLException e) {
-            System.out.println("Схема не обновлена");
-            e.printStackTrace();
-        }
     }
 
     public Dog create(Dog newDog) {

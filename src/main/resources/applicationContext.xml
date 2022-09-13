@@ -26,7 +26,8 @@
     <!--    </bean>-->
 
     <bean class="org.postgresql.ds.PGSimpleDataSource">
-        <property name="URL" value="jdbc:postgresql://192.168.1.77:5432/dogs"/>
+        <property name="URL" value="jdbc:postgresql://192.168.1.77:5432/postgres"/>
+        <property name="currentSchema" value="dogs"/>
         <property name="user" value="postgres"/>
         <property name="password" value="mysecretpassword"/>
     </bean>
